@@ -92,8 +92,9 @@ class _FinanceView extends StatelessWidget {
             ),
             FilledButton(
               onPressed: () {
-                if (form.currentState?.validate() == true)
+                if (form.currentState?.validate() == true) {
                   Navigator.pop(dialogContext, true);
+                }
               },
               child: const Text('تسجيل الإيراد'),
             ),
@@ -260,9 +261,10 @@ class _FinanceView extends StatelessWidget {
     ],
     child: BlocBuilder<FinanceCubit, FinanceState>(
       builder: (context, state) {
-        if (state is FinanceLoading || state is FinanceInitial)
+        if (state is FinanceLoading || state is FinanceInitial) {
           return const AppLoadingSkeleton();
-        if (state is FinanceFailure)
+        }
+        if (state is FinanceFailure) {
           return Padding(
             padding: const EdgeInsets.all(20),
             child: ErrorPanel(
@@ -270,6 +272,7 @@ class _FinanceView extends StatelessWidget {
               onRetry: () => context.read<FinanceCubit>().load(),
             ),
           );
+        }
         final loaded = state as FinanceLoaded;
         return ListView(
           padding: const EdgeInsets.all(20),

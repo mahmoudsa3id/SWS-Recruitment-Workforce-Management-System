@@ -27,7 +27,8 @@ final class AuditFailure extends AuditState {
 }
 
 class AuditCubit extends AccountingSyncCubit<AuditState> {
-  AuditCubit(this._list) : super(const AuditInitial(), listenToMonthChanges: true);
+  AuditCubit(this._list)
+    : super(const AuditInitial(), listenToMonthChanges: true);
 
   final ListAuditEntries _list;
 

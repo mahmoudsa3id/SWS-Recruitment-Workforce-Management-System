@@ -1,9 +1,9 @@
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../cache/local_cache.dart';
-import '../../features/auth/data/auth_repository_impl.dart';
+import '../../features/auth/data/repository/auth_repository_impl.dart';
 import '../../features/auth/data/datasources/auth_remote_data_source.dart';
-import '../../features/auth/domain/auth_repository.dart';
+import '../../features/auth/domain/repository/auth_repository.dart';
 import '../../features/auth/domain/usecases/sign_in.dart';
 import '../../features/auth/domain/usecases/check_admin_access.dart';
 import '../../features/auth/domain/usecases/sign_out.dart';
@@ -14,7 +14,7 @@ import '../../features/travelers/data/datasources/traveler_export_remote_data_so
 import '../../features/travelers/data/repositories/traveler_export_repository_impl.dart';
 import '../../features/travelers/domain/repositories/traveler_export_repository.dart';
 import '../../features/travelers/domain/usecases/export_traveler_file.dart';
-import '../../features/travelers/domain/traveler_repository.dart';
+import '../../features/travelers/domain/repositories/traveler_repository.dart';
 import '../../features/travelers/domain/usecases/list_travelers.dart';
 import '../../features/travelers/domain/usecases/create_traveler.dart';
 import '../../features/travelers/domain/usecases/delete_traveler.dart';
@@ -100,8 +100,12 @@ Future<void> configureDependencies(SupabaseClient client) async {
   sl.registerLazySingleton(() => SignOut(sl()));
   sl.registerFactory(() => AuthCubit(sl(), sl()));
 
-  sl.registerLazySingleton<TravelerRemoteDataSource>(() => TravelerRemoteDataSourceImpl(sl()));
-  sl.registerLazySingleton<TravelerRepository>(() => TravelerRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<TravelerRemoteDataSource>(
+    () => TravelerRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<TravelerRepository>(
+    () => TravelerRepositoryImpl(sl(), sl()),
+  );
   sl.registerLazySingleton(() => ListTravelers(sl()));
   sl.registerLazySingleton(() => CreateTraveler(sl()));
   sl.registerLazySingleton(() => ArchiveTraveler(sl()));
@@ -113,40 +117,54 @@ Future<void> configureDependencies(SupabaseClient client) async {
   sl.registerLazySingleton(() => SetTravelerAvatar(sl()));
   sl.registerLazySingleton(() => UpdateTraveler(sl()));
   sl.registerLazySingleton(() => TravelerExportRemoteDataSource(sl()));
-  sl.registerLazySingleton<TravelerExportRepository>(() => TravelerExportRepositoryImpl(sl(), sl(), sl()));
+  sl.registerLazySingleton<TravelerExportRepository>(
+    () => TravelerExportRepositoryImpl(sl(), sl(), sl()),
+  );
   sl.registerLazySingleton(() => ExportTravelerFile(sl()));
   sl.registerFactory(() => TravelersCubit(sl(), sl(), sl(), sl(), sl()));
-  sl.registerFactory(() => TravelerProfileCubit(sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory(
+    () => TravelerProfileCubit(sl(), sl(), sl(), sl(), sl(), sl()),
+  );
 
   sl.registerLazySingleton(() => FinanceRemoteDataSource(sl()));
-  sl.registerLazySingleton<FinanceRepository>(() => FinanceRepositoryImpl(sl()));
+  sl.registerLazySingleton<FinanceRepository>(
+    () => FinanceRepositoryImpl(sl()),
+  );
   sl.registerLazySingleton(() => ListFinancialMovements(sl()));
   sl.registerLazySingleton(() => RecordGeneralRevenue(sl()));
   sl.registerLazySingleton(() => DeleteFinancialMovement(sl()));
   sl.registerFactory(() => FinanceCubit(sl(), sl(), sl(), sl()));
 
   sl.registerLazySingleton(() => ExpensesRemoteDataSource(sl()));
-  sl.registerLazySingleton<ExpensesRepository>(() => ExpensesRepositoryImpl(sl()));
+  sl.registerLazySingleton<ExpensesRepository>(
+    () => ExpensesRepositoryImpl(sl()),
+  );
   sl.registerLazySingleton(() => ListExpenses(sl()));
   sl.registerLazySingleton(() => CreateExpense(sl()));
   sl.registerFactory(() => ExpensesCubit(sl(), sl(), sl()));
 
   sl.registerLazySingleton(() => PayrollRemoteDataSource(sl()));
-  sl.registerLazySingleton<PayrollRepository>(() => PayrollRepositoryImpl(sl()));
+  sl.registerLazySingleton<PayrollRepository>(
+    () => PayrollRepositoryImpl(sl()),
+  );
   sl.registerLazySingleton(() => ListPayroll(sl()));
   sl.registerLazySingleton(() => CreatePayroll(sl()));
   sl.registerLazySingleton(() => PayPayroll(sl()));
   sl.registerFactory(() => PayrollCubit(sl(), sl(), sl(), sl()));
 
   sl.registerLazySingleton(() => MonthlyClosingRemoteDataSource(sl()));
-  sl.registerLazySingleton<MonthlyClosingRepository>(() => MonthlyClosingRepositoryImpl(sl()));
+  sl.registerLazySingleton<MonthlyClosingRepository>(
+    () => MonthlyClosingRepositoryImpl(sl()),
+  );
   sl.registerLazySingleton(() => ListClosings(sl()));
   sl.registerLazySingleton(() => CloseMonth(sl()));
   sl.registerLazySingleton(() => ReopenMonth(sl()));
   sl.registerFactory(() => MonthlyClosingCubit(sl(), sl(), sl()));
 
   sl.registerLazySingleton(() => DocumentsRemoteDataSource(sl(), sl()));
-  sl.registerLazySingleton<DocumentsRepository>(() => DocumentsRepositoryImpl(sl()));
+  sl.registerLazySingleton<DocumentsRepository>(
+    () => DocumentsRepositoryImpl(sl()),
+  );
   sl.registerLazySingleton(() => ListTravelerDocuments(sl()));
   sl.registerLazySingleton(() => UploadTravelerDocument(sl()));
   sl.registerLazySingleton(() => CreateDocumentLink(sl()));
@@ -155,7 +173,9 @@ Future<void> configureDependencies(SupabaseClient client) async {
   sl.registerFactory(() => DocumentsCubit(sl(), sl(), sl(), sl(), sl()));
 
   sl.registerLazySingleton(() => ReportsRemoteDataSource(sl()));
-  sl.registerLazySingleton<ReportsRepository>(() => ReportsRepositoryImpl(sl()));
+  sl.registerLazySingleton<ReportsRepository>(
+    () => ReportsRepositoryImpl(sl()),
+  );
   sl.registerLazySingleton(() => LoadMonthlyReport(sl()));
   sl.registerFactory(() => ReportsCubit(sl()));
 
@@ -165,13 +185,17 @@ Future<void> configureDependencies(SupabaseClient client) async {
   sl.registerFactory(() => AuditCubit(sl()));
 
   sl.registerLazySingleton(() => SettingsLocalDataSource(sl(), sl()));
-  sl.registerLazySingleton<SettingsRepository>(() => SettingsRepositoryImpl(sl()));
+  sl.registerLazySingleton<SettingsRepository>(
+    () => SettingsRepositoryImpl(sl()),
+  );
   sl.registerLazySingleton(() => LoadSystemSettings(sl()));
   sl.registerLazySingleton(() => ClearLocalCache(sl()));
   sl.registerFactory(() => SettingsCubit(sl(), sl()));
 
   sl.registerLazySingleton(() => DashboardRemoteDataSource(sl()));
-  sl.registerLazySingleton<DashboardRepository>(() => DashboardRepositoryImpl(sl()));
+  sl.registerLazySingleton<DashboardRepository>(
+    () => DashboardRepositoryImpl(sl()),
+  );
   sl.registerLazySingleton(() => LoadDashboardSummary(sl()));
   sl.registerFactory(() => DashboardCubit(sl()));
 }

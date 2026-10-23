@@ -21,7 +21,11 @@ import 'widgets/sales_person_field.dart';
 import '../domain/usecases/export_traveler_file.dart';
 
 class TravelerProfilePage extends StatelessWidget {
-  const TravelerProfilePage({super.key, required this.travelerId, this.isHr = false});
+  const TravelerProfilePage({
+    super.key,
+    required this.travelerId,
+    this.isHr = false,
+  });
   final String travelerId;
   final bool isHr;
   @override
@@ -45,7 +49,8 @@ class _TravelerProfileView extends StatefulWidget {
 
 class _TravelerProfileViewState extends State<_TravelerProfileView> {
   String get travelerId => widget.travelerId;
-  final TextEditingController _documentSearchController = TextEditingController();
+  final TextEditingController _documentSearchController =
+      TextEditingController();
   Timer? _documentSearchDebounce;
   String _documentSearchQuery = '';
 
@@ -63,6 +68,7 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
     _documentSearchController.dispose();
     super.dispose();
   }
+
   Future<void> _exportTravelerFile(
     BuildContext context,
     String travelerName,
@@ -105,14 +111,16 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
         .replaceAll(RegExp(r'\s+'), ' ')
         .replaceAll(RegExp(r'[. ]+$'), '')
         .trim();
-    final folderName = safeTravelerName.isEmpty ? 'ملف-المسافر' : safeTravelerName;
+    final folderName = safeTravelerName.isEmpty
+        ? 'ملف-المسافر'
+        : safeTravelerName;
 
     try {
       final exportBytes = bytes;
       if (exportBytes == null || exportBytes.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('ملف التصدير فارغ.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('ملف التصدير فارغ.')));
         return;
       }
       final saved = await folder_saver.saveZipAsFolder(
@@ -132,9 +140,9 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
       );
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('تعذر حفظ مجلد المسافر: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('تعذر حفظ مجلد المسافر: $e')));
       }
     }
   }
@@ -213,8 +221,9 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
             ),
             FilledButton(
               onPressed: () {
-                if (form.currentState?.validate() == true)
+                if (form.currentState?.validate() == true) {
                   Navigator.pop(d, true);
+                }
               },
               child: Text(widget.isHr ? 'إرسال الطلب للأدمن' : 'تسجيل الدفعة'),
             ),
@@ -225,22 +234,31 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
     if (accepted != true || !context.mounted) return;
     if (widget.isHr) {
       try {
-        await sl<SupabaseClient>().rpc('sws_create_financial_request', params: {
-          'p_traveler_id': profile.traveler.id,
-          'p_request_type': 'traveler_payment',
-          'p_amount': double.parse(amount.text),
-          'p_payment_method': method,
-          'p_note': note.text.trim(),
-        });
+        await sl<SupabaseClient>().rpc(
+          'sws_create_financial_request',
+          params: {
+            'p_traveler_id': profile.traveler.id,
+            'p_request_type': 'traveler_payment',
+            'p_amount': double.parse(amount.text),
+            'p_payment_method': method,
+            'p_note': note.text.trim(),
+          },
+        );
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('تم إرسال طلب العملية المالية للأدمن للمراجعة. لن يتغير الرصيد قبل الموافقة.')),
+            const SnackBar(
+              content: Text(
+                'تم إرسال طلب العملية المالية للأدمن للمراجعة. لن يتغير الرصيد قبل الموافقة.',
+              ),
+            ),
           );
         }
       } catch (e) {
-        if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('تعذر إرسال الطلب المالي: $e')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('تعذر إرسال الطلب المالي: $e')),
+          );
+        }
       }
       return;
     }
@@ -272,7 +290,7 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
             note: latest.note,
           );
         } catch (_) {
-          if (context.mounted)
+          if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text(
@@ -280,33 +298,74 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
                 ),
               ),
             );
+          }
         }
       }
     }
   }
 
   Future<void> _chooseAvatar(BuildContext context) async {
-    final file = await FilePicker.pickFile(type: FileType.custom, allowedExtensions: const ['jpg', 'jpeg', 'png', 'webp']);
+    final file = await FilePicker.pickFile(
+      type: FileType.custom,
+      allowedExtensions: const ['jpg', 'jpeg', 'png', 'webp'],
+    );
     if (file == null || !context.mounted) return;
     try {
       final bytes = await file.readAsBytes();
       final ext = (file.extension ?? '').toLowerCase();
-      final mime = switch (ext) { 'jpg' || 'jpeg' => 'image/jpeg', 'png' => 'image/png', 'webp' => 'image/webp', _ => 'application/octet-stream' };
-      final error = await context.read<TravelerProfileCubit>().setAvatar(fileName: file.name, mimeType: mime, bytes: Uint8List.fromList(bytes));
+      final mime = switch (ext) {
+        'jpg' || 'jpeg' => 'image/jpeg',
+        'png' => 'image/png',
+        'webp' => 'image/webp',
+        _ => 'application/octet-stream',
+      };
+      final error = await context.read<TravelerProfileCubit>().setAvatar(
+        fileName: file.name,
+        mimeType: mime,
+        bytes: Uint8List.fromList(bytes),
+      );
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error ?? 'تم تحديث صورة المسافر.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error ?? 'تم تحديث صورة المسافر.')),
+      );
     } catch (e) {
-      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تعذر قراءة الصورة أو رفعها: $e')));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('تعذر قراءة الصورة أو رفعها: $e')),
+        );
+      }
     }
   }
 
   Widget _travelerAvatar(String? path, {double radius = 34}) {
-    if (path == null || path.trim().isEmpty) return CircleAvatar(radius: radius, backgroundColor: AppTheme.paleGreen, child: Icon(Icons.person_rounded, size: radius, color: AppTheme.green));
+    if (path == null || path.trim().isEmpty) {
+      return CircleAvatar(
+        radius: radius,
+        backgroundColor: AppTheme.paleGreen,
+        child: Icon(Icons.person_rounded, size: radius, color: AppTheme.green),
+      );
+    }
     return FutureBuilder<String>(
-      future: Supabase.instance.client.storage.from('sws-private-documents').createSignedUrl(path, 300),
+      future: Supabase.instance.client.storage
+          .from('sws-private-documents')
+          .createSignedUrl(path, 300),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return CircleAvatar(radius: radius, backgroundColor: AppTheme.paleGreen, child: Icon(Icons.person_rounded, size: radius, color: AppTheme.green));
-        return CircleAvatar(radius: radius, backgroundColor: AppTheme.paleGreen, backgroundImage: NetworkImage(snapshot.data!));
+        if (!snapshot.hasData) {
+          return CircleAvatar(
+            radius: radius,
+            backgroundColor: AppTheme.paleGreen,
+            child: Icon(
+              Icons.person_rounded,
+              size: radius,
+              color: AppTheme.green,
+            ),
+          );
+        }
+        return CircleAvatar(
+          radius: radius,
+          backgroundColor: AppTheme.paleGreen,
+          backgroundImage: NetworkImage(snapshot.data!),
+        );
       },
     );
   }
@@ -379,10 +438,7 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
                     decoration: const InputDecoration(labelText: 'الدولة'),
                   ),
                   const SizedBox(height: 10),
-                  SalesPersonField(
-                    controller: sales,
-                    label: 'مسؤول المبيعات',
-                  ),
+                  SalesPersonField(controller: sales, label: 'مسؤول المبيعات'),
                 ],
               ),
             ),
@@ -421,33 +477,64 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
     if (current is TravelerProfileLoaded) {
       final t = current.profile.traveler;
       if (value && stage == 'visa' && !t.inspected) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('لا يمكن نقل المسافر إلى التأشيرة قبل تسجيل الكشف.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('لا يمكن نقل المسافر إلى التأشيرة قبل تسجيل الكشف.'),
+          ),
+        );
         return;
       }
       if (value && stage == 'flight' && !t.visaIssued) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('لا يمكن إكمال الطيران قبل صدور التأشيرة.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('لا يمكن إكمال الطيران قبل صدور التأشيرة.'),
+          ),
+        );
         return;
       }
       if (value && stage == 'flight' && t.ticketBookingType == null) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('حدّد أولًا هل حجز التذكرة عن طريق الشركة أم حجز خارجي.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'حدّد أولًا هل حجز التذكرة عن طريق الشركة أم حجز خارجي.',
+            ),
+          ),
+        );
         return;
       }
-      if (!value && stage == 'submitted' && (t.inspected || t.visaIssued || t.flightBooked)) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ارجع المراحل التالية أولًا قبل إلغاء مرحلة «قدم».')));
+      if (!value &&
+          stage == 'submitted' &&
+          (t.inspected || t.visaIssued || t.flightBooked)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('ارجع المراحل التالية أولًا قبل إلغاء مرحلة «قدم».'),
+          ),
+        );
         return;
       }
       if (!value && stage == 'inspected' && (t.visaIssued || t.flightBooked)) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ألغِ مرحلة التأشيرة والطيران أولًا.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('ألغِ مرحلة التأشيرة والطيران أولًا.')),
+        );
         return;
       }
       if (!value && stage == 'visa' && t.flightBooked) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ألغِ مرحلة الطيران أولًا.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('ألغِ مرحلة الطيران أولًا.')),
+        );
         return;
       }
     }
-    final error = await context.read<TravelerProfileCubit>().setStage(stage: stage, value: value);
+    final error = await context.read<TravelerProfileCubit>().setStage(
+      stage: stage,
+      value: value,
+    );
     if (!context.mounted) return;
-    if (error != null) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+    if (error != null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(error)));
+    }
   }
 
   static const _documentTypes = [
@@ -474,10 +561,11 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
     try {
       bytes = await file.readAsBytes();
     } catch (_) {
-      if (context.mounted)
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('تعذر قراءة الملف المحدد.')),
         );
+      }
       return;
     }
     if (!context.mounted) return;
@@ -513,10 +601,11 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
     final uri = Uri.tryParse(url);
     if (uri == null ||
         !await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      if (context.mounted)
+      if (context.mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text('تعذر فتح المستند.')));
+      }
     }
   }
 
@@ -526,14 +615,12 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
       builder: (context, state) {
         if (state is TravelerProfileInitial ||
             state is TravelerProfileLoading) {
-          return const Scaffold(
-            body: AppLoadingSkeleton(),
-          );
+          return const Scaffold(body: AppLoadingSkeleton());
         }
         if (state is TravelerProfileFailure) {
           return Scaffold(
             body: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(16),
               child: ErrorPanel(
                 message: state.message,
                 onRetry: () =>
@@ -548,16 +635,19 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
         return AppScaffold(
           title: 'ملف المسافر',
           actions: [
-            if (!widget.isHr) IconButton(
-              tooltip: 'تصدير ملف المسافر مع مستنداته',
-              onPressed: () => _exportTravelerFile(context, traveler.fullName),
-              icon: const Icon(Icons.folder_open_outlined),
-            ),
-            if (!widget.isHr) IconButton(
-              tooltip: 'تعديل بيانات المسافر',
-              onPressed: () => _editProfile(context, profile),
-              icon: const Icon(Icons.edit_outlined),
-            ),
+            if (!widget.isHr)
+              IconButton(
+                tooltip: 'تصدير ملف المسافر مع مستنداته',
+                onPressed: () =>
+                    _exportTravelerFile(context, traveler.fullName),
+                icon: const Icon(Icons.folder_open_outlined),
+              ),
+            if (!widget.isHr)
+              IconButton(
+                tooltip: 'تعديل بيانات المسافر',
+                onPressed: () => _editProfile(context, profile),
+                icon: const Icon(Icons.edit_outlined),
+              ),
             Padding(
               padding: const EdgeInsetsDirectional.only(end: 12),
               child: FilledButton.icon(
@@ -581,26 +671,67 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Stack(children: [
-                      _travelerAvatar(traveler.avatarPath, radius: 38),
-                      if (!widget.isHr) PositionedDirectional(bottom: -2, end: -2, child: IconButton.filledTonal(
-                        tooltip: 'تغيير صورة المسافر', onPressed: () => _chooseAvatar(context),
-                        icon: const Icon(Icons.camera_alt_rounded, size: 16),
-                        style: IconButton.styleFrom(backgroundColor: Colors.white, foregroundColor: AppTheme.green, minimumSize: const Size(30, 30), padding: EdgeInsets.zero),
-                      )),
-                    ]),
+                    Stack(
+                      children: [
+                        _travelerAvatar(traveler.avatarPath, radius: 38),
+                        if (!widget.isHr)
+                          PositionedDirectional(
+                            bottom: -2,
+                            end: -2,
+                            child: IconButton.filledTonal(
+                              tooltip: 'تغيير صورة المسافر',
+                              onPressed: () => _chooseAvatar(context),
+                              icon: const Icon(
+                                Icons.camera_alt_rounded,
+                                size: 16,
+                              ),
+                              style: IconButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: AppTheme.green,
+                                minimumSize: const Size(30, 30),
+                                padding: EdgeInsets.zero,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                     const SizedBox(width: 18),
-                    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(traveler.fullName, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w900, color: Colors.white)),
-                      const SizedBox(height: 6),
-                      Text('${traveler.phone} • رقم الملف ${traveler.fileNo ?? '—'}', style: const TextStyle(color: Colors.white70)),
-                      if (traveler.destinationCountry != null) Text('الوجهة: ${traveler.destinationCountry}', style: const TextStyle(color: Colors.white70)),
-                      const SizedBox(height: 8),
-                      Wrap(spacing: 8, runSpacing: 6, children: [
-                        _stageBadge(traveler.currentStage),
-                        if (traveler.salesPerson != null && traveler.salesPerson!.trim().isNotEmpty) _stageBadge('مسؤول: ${traveler.salesPerson}'),
-                      ]),
-                    ])),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            traveler.fullName,
+                            style: const TextStyle(
+                              fontSize: 26,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            '${traveler.phone} • رقم الملف ${traveler.fileNo ?? '—'}',
+                            style: const TextStyle(color: Colors.white70),
+                          ),
+                          if (traveler.destinationCountry != null)
+                            Text(
+                              'الوجهة: ${traveler.destinationCountry}',
+                              style: const TextStyle(color: Colors.white70),
+                            ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 6,
+                            children: [
+                              _stageBadge(traveler.currentStage),
+                              if (traveler.salesPerson != null &&
+                                  traveler.salesPerson!.trim().isNotEmpty)
+                                _stageBadge('مسؤول: ${traveler.salesPerson}'),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -665,7 +796,10 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
               ),
               if (traveler.visaIssued && !traveler.flightBooked) ...[
                 const SizedBox(height: 18),
-                _TicketBookingCard(initialType: traveler.ticketBookingType, initialNote: traveler.ticketBookingNote),
+                _TicketBookingCard(
+                  initialType: traveler.ticketBookingType,
+                  initialNote: traveler.ticketBookingNote,
+                ),
               ],
               const SizedBox(height: 24),
               const SectionTitle('سجل الدفعات والحركات'),
@@ -700,20 +834,24 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
   List<Widget> _documentSection(BuildContext context) => [
     BlocBuilder<DocumentsCubit, DocumentsState>(
       builder: (context, state) {
-        if (state is DocumentsInitial || state is DocumentsLoading)
+        if (state is DocumentsInitial || state is DocumentsLoading) {
           return const AppLoadingRows(rows: 2);
-        if (state is DocumentsFailure)
+        }
+        if (state is DocumentsFailure) {
           return ErrorPanel(
             message: state.message,
             onRetry: () => context.read<DocumentsCubit>().load(travelerId),
           );
+        }
         final docs = (state as DocumentsLoaded).items;
         final query = _documentSearchQuery;
-        final matchingDocs = docs.where((doc) {
-          if (query.isEmpty) return true;
-          return doc.fileName.toLowerCase().contains(query) ||
-              doc.type.toLowerCase().contains(query);
-        }).toList(growable: false);
+        final matchingDocs = docs
+            .where((doc) {
+              if (query.isEmpty) return true;
+              return doc.fileName.toLowerCase().contains(query) ||
+                  doc.type.toLowerCase().contains(query);
+            })
+            .toList(growable: false);
         return Column(
           children: [
             TextField(
@@ -737,48 +875,50 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
             ),
             const SizedBox(height: 10),
             ..._documentTypes.map((type) {
-            final items = matchingDocs
-                .where((d) => d.type == type)
-                .toList(growable: false);
-            if (query.isNotEmpty && items.isEmpty) return const SizedBox.shrink();
-            return Card(
-              child: ExpansionTile(
-                leading: const Icon(Icons.folder_outlined),
-                title: Text(
-                  type,
-                  style: const TextStyle(fontWeight: FontWeight.w800),
-                ),
-                subtitle: Text('${items.length} ملف'),
-                trailing: IconButton(
-                  tooltip: 'رفع $type',
-                  onPressed: () => _uploadDocument(context, type),
-                  icon: const Icon(Icons.upload_file),
-                ),
-                children: items.isEmpty
-                    ? [
-                        const ListTile(
-                          title: Text('لا توجد ملفات في هذا القسم.'),
-                        ),
-                      ]
-                    : items
-                          .map(
-                            (doc) => ListTile(
-                              leading: const Icon(Icons.description_outlined),
-                              title: Text(doc.fileName),
-                              subtitle: Text(
-                                '${((doc.fileSize ?? 0) / 1024).toStringAsFixed(1)} KB • ${DateFormat('yyyy-MM-dd').format(doc.createdAt)}',
+              final items = matchingDocs
+                  .where((d) => d.type == type)
+                  .toList(growable: false);
+              if (query.isNotEmpty && items.isEmpty) {
+                return const SizedBox.shrink();
+              }
+              return Card(
+                child: ExpansionTile(
+                  leading: const Icon(Icons.folder_outlined),
+                  title: Text(
+                    type,
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
+                  subtitle: Text('${items.length} ملف'),
+                  trailing: IconButton(
+                    tooltip: 'رفع $type',
+                    onPressed: () => _uploadDocument(context, type),
+                    icon: const Icon(Icons.upload_file),
+                  ),
+                  children: items.isEmpty
+                      ? [
+                          const ListTile(
+                            title: Text('لا توجد ملفات في هذا القسم.'),
+                          ),
+                        ]
+                      : items
+                            .map(
+                              (doc) => ListTile(
+                                leading: const Icon(Icons.description_outlined),
+                                title: Text(doc.fileName),
+                                subtitle: Text(
+                                  '${((doc.fileSize ?? 0) / 1024).toStringAsFixed(1)} KB • ${DateFormat('yyyy-MM-dd').format(doc.createdAt)}',
+                                ),
+                                trailing: IconButton(
+                                  tooltip: 'فتح المستند',
+                                  onPressed: () => _openDocument(context, doc),
+                                  icon: const Icon(Icons.open_in_new),
+                                ),
                               ),
-                              trailing: IconButton(
-                                tooltip: 'فتح المستند',
-                                onPressed: () => _openDocument(context, doc),
-                                icon: const Icon(Icons.open_in_new),
-                              ),
-                            ),
-                          )
-                          .toList(),
-              ),
-            );
-          }).toList(),
+                            )
+                            .toList(),
+                ),
+              );
+            }).toList(),
           ],
         );
       },
@@ -786,8 +926,18 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
   ];
   Widget _stageBadge(String label) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-    decoration: BoxDecoration(color: Colors.white.withValues(alpha: .16), borderRadius: BorderRadius.circular(30)),
-    child: Text(label, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)),
+    decoration: BoxDecoration(
+      color: Colors.white.withValues(alpha: .16),
+      borderRadius: BorderRadius.circular(30),
+    ),
+    child: Text(
+      label,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 11,
+        fontWeight: FontWeight.w700,
+      ),
+    ),
   );
 
   Widget _metric(String title, double value) => SizedBox(
@@ -850,9 +1000,11 @@ class _TravelerProfileViewState extends State<_TravelerProfileView> {
   );
 }
 
-
 class _TicketBookingCard extends StatefulWidget {
-  const _TicketBookingCard({required this.initialType, required this.initialNote});
+  const _TicketBookingCard({
+    required this.initialType,
+    required this.initialNote,
+  });
   final String? initialType;
   final String? initialNote;
   @override
@@ -861,43 +1013,98 @@ class _TicketBookingCard extends StatefulWidget {
 
 class _TicketBookingCardState extends State<_TicketBookingCard> {
   late String? type = widget.initialType;
-  late final TextEditingController note = TextEditingController(text: widget.initialNote ?? '');
+  late final TextEditingController note = TextEditingController(
+    text: widget.initialNote ?? '',
+  );
   bool saving = false;
   @override
-  void dispose() { note.dispose(); super.dispose(); }
+  void dispose() {
+    note.dispose();
+    super.dispose();
+  }
 
   Future<void> _save() async {
     if (type == 'company' && note.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('اكتب ملاحظة حجز التذكرة من خلال الشركة.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('اكتب ملاحظة حجز التذكرة من خلال الشركة.'),
+        ),
+      );
       return;
     }
     setState(() => saving = true);
-    final error = await context.read<TravelerProfileCubit>().setTicketBooking(type: type, note: note.text.trim());
+    final error = await context.read<TravelerProfileCubit>().setTicketBooking(
+      type: type,
+      note: note.text.trim(),
+    );
     if (!mounted) return;
     setState(() => saving = false);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error ?? 'تم حفظ طريقة حجز التذكرة.')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(error ?? 'تم حفظ طريقة حجز التذكرة.')),
+    );
   }
 
   @override
-  Widget build(BuildContext context) => Card(child: Padding(
-    padding: const EdgeInsets.all(18),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const SectionTitle('حجز تذكرة الطيران', subtitle: 'التأشيرة صدرت؛ حدّد طريقة حجز التذكرة قبل إكمال مرحلة الطيران.'),
-      const SizedBox(height: 12),
-      Wrap(spacing: 12, runSpacing: 8, children: [
-        ChoiceChip(label: const Text('الحجز عن طريق الشركة'), selected: type == 'company', onSelected: (_) => setState(() => type = 'company')),
-        ChoiceChip(label: const Text('حجز خارجي'), selected: type == 'external', onSelected: (_) => setState(() => type = 'external')),
-      ]),
-      if (type == 'company') ...[
-        const SizedBox(height: 12),
-        TextField(controller: note, minLines: 2, maxLines: 4, decoration: const InputDecoration(labelText: 'ملاحظة الحجز *', hintText: 'اكتب تفاصيل الحجز أو الموعد أو شركة الطيران')),
-      ],
-      const SizedBox(height: 12),
-      Align(alignment: AlignmentDirectional.centerStart, child: FilledButton.icon(
-        onPressed: saving || type == null ? null : _save,
-        icon: saving ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Icon(Icons.save_outlined),
-        label: Text(saving ? 'جارٍ الحفظ...' : 'حفظ اختيار التذكرة'),
-      )),
-    ]),
-  ));
+  Widget build(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SectionTitle(
+            'حجز تذكرة الطيران',
+            subtitle:
+                'التأشيرة صدرت؛ حدّد طريقة حجز التذكرة قبل إكمال مرحلة الطيران.',
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 12,
+            runSpacing: 8,
+            children: [
+              ChoiceChip(
+                label: const Text('الحجز عن طريق الشركة'),
+                selected: type == 'company',
+                onSelected: (_) => setState(() => type = 'company'),
+              ),
+              ChoiceChip(
+                label: const Text('حجز خارجي'),
+                selected: type == 'external',
+                onSelected: (_) => setState(() => type = 'external'),
+              ),
+            ],
+          ),
+          if (type == 'company') ...[
+            const SizedBox(height: 12),
+            TextField(
+              controller: note,
+              minLines: 2,
+              maxLines: 4,
+              decoration: const InputDecoration(
+                labelText: 'ملاحظة الحجز *',
+                hintText: 'اكتب تفاصيل الحجز أو الموعد أو شركة الطيران',
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: FilledButton.icon(
+              onPressed: saving || type == null ? null : _save,
+              icon: saving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.save_outlined),
+              label: Text(saving ? 'جارٍ الحفظ...' : 'حفظ اختيار التذكرة'),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

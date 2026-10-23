@@ -27,19 +27,23 @@ class DashboardSummaryModel extends DashboardSummary {
     final stages = _map(map['traveler_stages']);
     final trendData = map['monthly_trend'];
     final trend = trendData is List
-        ? trendData.whereType<Map>().map((item) {
-            final row = Map<String, dynamic>.from(item);
-            return DashboardTrendPoint(
-              monthStart: DateTime.tryParse('${row['month_start'] ?? ''}') ??
-                  DateTime(2000),
-              collections: _n(row['collections']),
-              generalRevenue: _n(row['general_revenue']),
-              officeExpenses: _n(row['office_expenses']),
-              payrollPaid: _n(row['payroll_paid']),
-              totalCredits: _n(row['total_credits']),
-              totalDebits: _n(row['total_debits']),
-            );
-          }).toList(growable: false)
+        ? trendData
+              .whereType<Map>()
+              .map((item) {
+                final row = Map<String, dynamic>.from(item);
+                return DashboardTrendPoint(
+                  monthStart:
+                      DateTime.tryParse('${row['month_start'] ?? ''}') ??
+                      DateTime(2000),
+                  collections: _n(row['collections']),
+                  generalRevenue: _n(row['general_revenue']),
+                  officeExpenses: _n(row['office_expenses']),
+                  payrollPaid: _n(row['payroll_paid']),
+                  totalCredits: _n(row['total_credits']),
+                  totalDebits: _n(row['total_debits']),
+                );
+              })
+              .toList(growable: false)
         : const <DashboardTrendPoint>[];
 
     return DashboardSummaryModel(
@@ -72,8 +76,9 @@ class DashboardSummaryModel extends DashboardSummary {
       value is num ? value.toInt() : int.tryParse('$value') ?? 0;
 
   static double _n(dynamic value) {
-    final parsed =
-        value is num ? value.toDouble() : double.tryParse('${value ?? ''}') ?? 0;
+    final parsed = value is num
+        ? value.toDouble()
+        : double.tryParse('${value ?? ''}') ?? 0;
     return parsed.isFinite ? parsed : 0;
   }
 }

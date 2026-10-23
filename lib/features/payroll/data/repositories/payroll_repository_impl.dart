@@ -34,8 +34,9 @@ class PayrollRepositoryImpl implements PayrollRepository {
     required double overtimeHours,
     required double overtimeRate,
   }) async {
-    if (employeeName.trim().isEmpty)
+    if (employeeName.trim().isEmpty) {
       return const Left(ValidationFailure('اسم الموظف مطلوب.'));
+    }
     if ([
       baseSalary,
       commission,
@@ -43,17 +44,19 @@ class PayrollRepositoryImpl implements PayrollRepository {
       bonus,
       overtimeHours,
       overtimeRate,
-    ].any((v) => !v.isFinite || v < 0))
+    ].any((v) => !v.isFinite || v < 0)) {
       return const Left(
         ValidationFailure(
           'قيم الراتب والعمولة والخصم يجب أن تكون موجبة أو صفرًا.',
         ),
       );
+    }
     if (deductions >
-        baseSalary + commission + bonus + (overtimeHours * overtimeRate))
+        baseSalary + commission + bonus + (overtimeHours * overtimeRate)) {
       return const Left(
         ValidationFailure('الخصومات لا يمكن أن تتجاوز الأساسي والعمولة.'),
       );
+    }
     try {
       return Right(
         await remote.create(
@@ -84,8 +87,9 @@ class PayrollRepositoryImpl implements PayrollRepository {
     required String method,
     required String note,
   }) async {
-    if (payrollId.trim().isEmpty || !amount.isFinite || amount <= 0)
+    if (payrollId.trim().isEmpty || !amount.isFinite || amount <= 0) {
       return const Left(ValidationFailure('بيانات الدفع غير صحيحة.'));
+    }
     try {
       return Right(
         await remote.pay(
@@ -116,8 +120,9 @@ class PayrollRepositoryImpl implements PayrollRepository {
     required double overtimeHours,
     required double overtimeRate,
   }) async {
-    if (employeeName.trim().isEmpty)
+    if (employeeName.trim().isEmpty) {
       return const Left(ValidationFailure('اسم الموظف مطلوب.'));
+    }
     if ([
           baseSalary,
           commission,
@@ -126,11 +131,13 @@ class PayrollRepositoryImpl implements PayrollRepository {
           overtimeHours,
           overtimeRate,
         ].any((v) => !v.isFinite || v < 0) ||
-        baseSalary <= 0)
+        baseSalary <= 0) {
       return const Left(ValidationFailure('قيم الراتب غير صحيحة.'));
+    }
     if (deductions >
-        baseSalary + commission + bonus + overtimeHours * overtimeRate)
+        baseSalary + commission + bonus + overtimeHours * overtimeRate) {
       return const Left(ValidationFailure('الخصومات تتجاوز إجمالي الاستحقاق.'));
+    }
     try {
       await remote.update(
         payrollId: payrollId,

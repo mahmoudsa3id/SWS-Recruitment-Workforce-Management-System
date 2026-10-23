@@ -34,7 +34,10 @@ class DashboardPanel extends StatelessWidget {
                     Text(title, style: Theme.of(context).textTheme.titleLarge),
                     if (subtitle != null) ...[
                       const SizedBox(height: 5),
-                      Text(subtitle!, style: Theme.of(context).textTheme.bodySmall),
+                      Text(
+                        subtitle!,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                     ],
                   ],
                 ),
@@ -65,7 +68,9 @@ class BalanceDonut extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final denominator = paid + remaining;
-    final paidPercent = denominator <= 0 ? 0.0 : (paid / denominator).clamp(0.0, 1.0).toDouble();
+    final paidPercent = denominator <= 0
+        ? 0.0
+        : (paid / denominator).clamp(0.0, 1.0).toDouble();
     return LayoutBuilder(
       builder: (context, constraints) {
         final diameter = math.min(constraints.maxWidth, 220.0);
@@ -89,16 +94,26 @@ class BalanceDonut extends StatelessWidget {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('إجمالي الاتفاقات', style: TextStyle(color: AppTheme.muted, fontSize: 11)),
+                      const Text(
+                        'إجمالي الاتفاقات',
+                        style: TextStyle(color: AppTheme.muted, fontSize: 11),
+                      ),
                       const SizedBox(height: 6),
                       FittedBox(
                         child: Text(
                           _money(total),
-                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: AppTheme.ink),
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w900,
+                            color: AppTheme.ink,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 4),
-                      const Text('جنيه مصري', style: TextStyle(color: AppTheme.muted, fontSize: 10)),
+                      const Text(
+                        'جنيه مصري',
+                        style: TextStyle(color: AppTheme.muted, fontSize: 10),
+                      ),
                     ],
                   ),
                 ],
@@ -110,8 +125,16 @@ class BalanceDonut extends StatelessWidget {
               spacing: 18,
               runSpacing: 12,
               children: [
-                _LegendDot(color: AppTheme.green3, label: 'المدفوع', value: _money(paid)),
-                _LegendDot(color: AppTheme.gold, label: 'المتبقي', value: _money(remaining)),
+                _LegendDot(
+                  color: AppTheme.green3,
+                  label: 'المدفوع',
+                  value: _money(paid),
+                ),
+                _LegendDot(
+                  color: AppTheme.gold,
+                  label: 'المتبقي',
+                  value: _money(remaining),
+                ),
               ],
             ),
           ],
@@ -124,10 +147,7 @@ class BalanceDonut extends StatelessWidget {
 }
 
 class StageDonut extends StatelessWidget {
-  const StageDonut({
-    super.key,
-    required this.summary,
-  });
+  const StageDonut({super.key, required this.summary});
 
   final DashboardSummary summary;
 
@@ -142,7 +162,7 @@ class StageDonut extends StatelessWidget {
     ];
     final total = summary.totalStageCount;
     final segments = total == 0
-        ? [_DonutSegment(1, AppTheme.border)]
+        ? [const _DonutSegment(1, AppTheme.border)]
         : values;
     final diameter = 172.0;
 
@@ -156,13 +176,26 @@ class StageDonut extends StatelessWidget {
             children: [
               CustomPaint(
                 size: Size.square(diameter),
-                painter: _DonutPainter(segments: segments, useWeights: total == 0),
+                painter: _DonutPainter(
+                  segments: segments,
+                  useWeights: total == 0,
+                ),
               ),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('$total', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: AppTheme.ink)),
-                  const Text('مسافر', style: TextStyle(fontSize: 11, color: AppTheme.muted)),
+                  Text(
+                    '$total',
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w900,
+                      color: AppTheme.ink,
+                    ),
+                  ),
+                  const Text(
+                    'مسافر',
+                    style: TextStyle(fontSize: 11, color: AppTheme.muted),
+                  ),
                 ],
               ),
             ],
@@ -173,15 +206,35 @@ class StageDonut extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _LegendDot(color: values[0].color, label: 'جديد', value: '${summary.stageNew}'),
+              _LegendDot(
+                color: values[0].color,
+                label: 'جديد',
+                value: '${summary.stageNew}',
+              ),
               const SizedBox(height: 9),
-              _LegendDot(color: values[1].color, label: 'تقديم', value: '${summary.stageSubmitted}'),
+              _LegendDot(
+                color: values[1].color,
+                label: 'تقديم',
+                value: '${summary.stageSubmitted}',
+              ),
               const SizedBox(height: 9),
-              _LegendDot(color: values[2].color, label: 'كشف', value: '${summary.stageInspected}'),
+              _LegendDot(
+                color: values[2].color,
+                label: 'كشف',
+                value: '${summary.stageInspected}',
+              ),
               const SizedBox(height: 9),
-              _LegendDot(color: values[3].color, label: 'تأشيرة', value: '${summary.stageVisa}'),
+              _LegendDot(
+                color: values[3].color,
+                label: 'تأشيرة',
+                value: '${summary.stageVisa}',
+              ),
               const SizedBox(height: 9),
-              _LegendDot(color: values[4].color, label: 'طيران', value: '${summary.stageFlight}'),
+              _LegendDot(
+                color: values[4].color,
+                label: 'طيران',
+                value: '${summary.stageFlight}',
+              ),
             ],
           ),
         ),
@@ -234,7 +287,11 @@ class CashflowBarChart extends StatelessWidget {
                       children: [
                         Text(
                           _compact(math.max(point.income, point.spending)),
-                          style: const TextStyle(fontSize: 9, color: AppTheme.muted, fontWeight: FontWeight.w700),
+                          style: const TextStyle(
+                            fontSize: 9,
+                            color: AppTheme.muted,
+                            fontWeight: FontWeight.w700,
+                          ),
                           maxLines: 1,
                         ),
                         const SizedBox(height: 7),
@@ -265,7 +322,11 @@ class CashflowBarChart extends StatelessWidget {
                         const SizedBox(height: 9),
                         Text(
                           '${point.monthStart.month}/${point.monthStart.year % 100}',
-                          style: const TextStyle(fontSize: 10, color: AppTheme.muted, fontWeight: FontWeight.w700),
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: AppTheme.muted,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ],
                     ),
@@ -329,7 +390,13 @@ class _DonutPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = stroke
         ..strokeCap = StrokeCap.round;
-      canvas.drawArc(rect, start, math.max(0.0, sweep - .035).toDouble(), false, paint);
+      canvas.drawArc(
+        rect,
+        start,
+        math.max(0.0, sweep - .035).toDouble(),
+        false,
+        paint,
+      );
       start += sweep;
     }
   }
@@ -340,7 +407,11 @@ class _DonutPainter extends CustomPainter {
 }
 
 class _LegendDot extends StatelessWidget {
-  const _LegendDot({required this.color, required this.label, required this.value});
+  const _LegendDot({
+    required this.color,
+    required this.label,
+    required this.value,
+  });
   final Color color;
   final String label;
   final String value;
@@ -349,12 +420,32 @@ class _LegendDot extends StatelessWidget {
   Widget build(BuildContext context) => Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Container(width: 9, height: 9, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+      Container(
+        width: 9,
+        height: 9,
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+      ),
       const SizedBox(width: 7),
-      Flexible(child: Text(label, style: const TextStyle(fontSize: 11, color: AppTheme.muted, fontWeight: FontWeight.w600))),
+      Flexible(
+        child: Text(
+          label,
+          style: const TextStyle(
+            fontSize: 11,
+            color: AppTheme.muted,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
       if (value.isNotEmpty) ...[
         const SizedBox(width: 6),
-        Text(value, style: const TextStyle(fontSize: 11, color: AppTheme.ink, fontWeight: FontWeight.w800)),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 11,
+            color: AppTheme.ink,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
       ],
     ],
   );

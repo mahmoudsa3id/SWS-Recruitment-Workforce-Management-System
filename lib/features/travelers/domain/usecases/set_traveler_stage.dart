@@ -1,1 +1,12 @@
-import '../../../../core/result.dart'; import '../traveler_repository.dart'; class SetTravelerStage { const SetTravelerStage(this.repository); final TravelerRepository repository; Future<Result<void>> call({required String travelerId,required String stage,required bool value})=>repository.setStage(travelerId:travelerId,stage:stage,value:value); }
+import '../../../../core/result.dart';
+import '../repositories/traveler_repository.dart';
+
+class SetTravelerStage {
+  const SetTravelerStage(this.repository);
+  final TravelerRepository repository;
+  Future<Result<void>> call({
+    required String travelerId,
+    required String stage,
+    required bool value,
+  }) => repository.setStage(travelerId: travelerId, stage: stage, value: value);
+}

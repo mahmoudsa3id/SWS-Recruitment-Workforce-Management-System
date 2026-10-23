@@ -1,2 +1,21 @@
-import '../../../../core/result.dart'; import '../entities/traveler.dart'; import '../traveler_repository.dart';
-class CreateTraveler {const CreateTraveler(this.repository);final TravelerRepository repository;Future<Result<Traveler>> call({required String fullName,required String phone,required double agreementTotal,String? salesPerson,String? country})=>repository.create(fullName:fullName,phone:phone,agreementTotal:agreementTotal,salesPerson:salesPerson,country:country);}
+import '../../../../core/result.dart';
+import '../entities/traveler.dart';
+import '../repositories/traveler_repository.dart';
+
+class CreateTraveler {
+  const CreateTraveler(this.repository);
+  final TravelerRepository repository;
+  Future<Result<Traveler>> call({
+    required String fullName,
+    required String phone,
+    required double agreementTotal,
+    String? salesPerson,
+    String? country,
+  }) => repository.create(
+    fullName: fullName,
+    phone: phone,
+    agreementTotal: agreementTotal,
+    salesPerson: salesPerson,
+    country: country,
+  );
+}

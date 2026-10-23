@@ -19,12 +19,13 @@ class AppScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 24,
+        automaticallyImplyLeading: false,
+        titleSpacing: 40,
         title: Row(
           children: [
             Container(
-              width: 42,
-              height: 42,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 color: AppTheme.paleGreen,
                 borderRadius: BorderRadius.circular(13),
@@ -37,10 +38,7 @@ class AppScaffold extends StatelessWidget {
             ),
           ],
         ),
-        actions: [
-          ...actions,
-          const SizedBox(width: 12),
-        ],
+        actions: [...actions, const SizedBox(width: 12)],
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(1),
           child: Divider(height: 1, color: AppTheme.border),
@@ -120,9 +118,15 @@ class ErrorPanel extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline_rounded, color: AppTheme.danger, size: 25),
+          const Icon(
+            Icons.error_outline_rounded,
+            color: AppTheme.danger,
+            size: 25,
+          ),
           const SizedBox(width: 12),
-          Expanded(child: Text(message, style: const TextStyle(color: AppTheme.ink))),
+          Expanded(
+            child: Text(message, style: const TextStyle(color: AppTheme.ink)),
+          ),
           if (onRetry != null)
             TextButton.icon(
               onPressed: onRetry,

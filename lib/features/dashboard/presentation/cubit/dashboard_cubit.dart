@@ -27,7 +27,8 @@ final class DashboardFailure extends DashboardState {
 }
 
 class DashboardCubit extends AccountingSyncCubit<DashboardState> {
-  DashboardCubit(this._load) : super(const DashboardInitial(), listenToMonthChanges: true);
+  DashboardCubit(this._load)
+    : super(const DashboardInitial(), listenToMonthChanges: true);
 
   final LoadDashboardSummary _load;
 

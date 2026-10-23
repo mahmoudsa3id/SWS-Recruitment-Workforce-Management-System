@@ -32,12 +32,15 @@ class FinanceRepositoryImpl implements FinanceRepository {
     required String method,
     required String note,
   }) async {
-    if (!amount.isFinite || amount <= 0)
+    if (!amount.isFinite || amount <= 0) {
       return const Left(ValidationFailure('المبلغ يجب أن يكون أكبر من صفر.'));
-    if (note.trim().isEmpty)
+    }
+    if (note.trim().isEmpty) {
       return const Left(ValidationFailure('بيان الإيراد مطلوب.'));
-    if (!_methods.contains(method))
+    }
+    if (!_methods.contains(method)) {
       return const Left(ValidationFailure('طريقة الدفع غير صحيحة.'));
+    }
     try {
       return Right(
         await remote.generalRevenue(amount: amount, method: method, note: note),
@@ -83,10 +86,12 @@ class FinanceRepositoryImpl implements FinanceRepository {
     required String note,
     required String reason,
   }) async {
-    if (movementId.trim().isEmpty)
+    if (movementId.trim().isEmpty) {
       return const Left(ValidationFailure('الحركة المالية غير محددة.'));
-    if (reason.trim().isEmpty)
+    }
+    if (reason.trim().isEmpty) {
       return const Left(ValidationFailure('سبب التعديل مطلوب.'));
+    }
     try {
       await remote.updateNote(id: movementId, note: note, reason: reason);
       return const Right(null);

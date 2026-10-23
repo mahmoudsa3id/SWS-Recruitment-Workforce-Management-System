@@ -95,7 +95,7 @@ class _PayrollView extends StatelessWidget {
           ),
           FilledButton(
             onPressed: () {
-              if (form.currentState?.validate() == true)
+              if (form.currentState?.validate() == true) {
                 Navigator.pop(d, {
                   'name': name.text.trim(),
                   'base': base.text,
@@ -105,6 +105,7 @@ class _PayrollView extends StatelessWidget {
                   'rate': overtimeRate.text,
                   'deductions': deductions.text,
                 });
+              }
             },
             child: const Text('حفظ'),
           ),
@@ -281,8 +282,9 @@ class _PayrollView extends StatelessWidget {
             ),
             FilledButton(
               onPressed: () {
-                if (form.currentState?.validate() == true)
+                if (form.currentState?.validate() == true) {
                   Navigator.pop(d, true);
+                }
               },
               child: const Text('تأكيد الدفع'),
             ),
@@ -353,9 +355,10 @@ class _PayrollView extends StatelessWidget {
     ],
     child: BlocBuilder<PayrollCubit, PayrollState>(
       builder: (context, state) {
-        if (state is PayrollInitial || state is PayrollLoading)
+        if (state is PayrollInitial || state is PayrollLoading) {
           return const AppLoadingSkeleton();
-        if (state is PayrollFailure)
+        }
+        if (state is PayrollFailure) {
           return Padding(
             padding: const EdgeInsets.all(20),
             child: ErrorPanel(
@@ -363,6 +366,7 @@ class _PayrollView extends StatelessWidget {
               onRetry: () => context.read<PayrollCubit>().load(),
             ),
           );
+        }
         final loaded = state as PayrollLoaded;
         return ListView(
           padding: const EdgeInsets.all(20),

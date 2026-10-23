@@ -1,1 +1,30 @@
-import 'package:dartz/dartz.dart'; import '../../../../core/errors/failure.dart'; import '../../../../core/result.dart'; import '../../domain/entities/system_settings.dart'; import '../../domain/repositories/settings_repository.dart'; import '../datasources/settings_local_data_source.dart'; import '../models/system_settings_model.dart'; class SettingsRepositoryImpl implements SettingsRepository { SettingsRepositoryImpl(this.local); final SettingsLocalDataSource local; @override Future<Result<SystemSettings>> load() async {try{return Right(SystemSettingsModel.fromMap(local.read()));}catch(e){return Left(ServerFailure('تعذر تحميل إعدادات النظام.',cause:e));}} @override Future<Result<void>> clearLocalCache() async {try{await local.clearCache();return const Right(null);}catch(e){return Left(CacheFailure('تعذر مسح الكاش المحلي.',cause:e));}} }
+import 'package:dartz/dartz.dart';
+import '../../../../core/errors/failure.dart';
+import '../../../../core/result.dart';
+import '../../domain/entities/system_settings.dart';
+import '../../domain/repositories/settings_repository.dart';
+import '../datasources/settings_local_data_source.dart';
+import '../models/system_settings_model.dart';
+
+class SettingsRepositoryImpl implements SettingsRepository {
+  SettingsRepositoryImpl(this.local);
+  final SettingsLocalDataSource local;
+  @override
+  Future<Result<SystemSettings>> load() async {
+    try {
+      return Right(SystemSettingsModel.fromMap(local.read()));
+    } catch (e) {
+      return Left(ServerFailure('تعذر تحميل إعدادات النظام.', cause: e));
+    }
+  }
+
+  @override
+  Future<Result<void>> clearLocalCache() async {
+    try {
+      await local.clearCache();
+      return const Right(null);
+    } catch (e) {
+      return Left(CacheFailure('تعذر مسح الكاش المحلي.', cause: e));
+    }
+  }
+}

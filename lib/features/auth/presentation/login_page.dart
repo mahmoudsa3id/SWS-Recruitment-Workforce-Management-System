@@ -232,12 +232,12 @@ class _LoginViewState extends State<_LoginView> {
             if (!desktop) {
               return Stack(
                 children: [
-                  Positioned(
+                  const Positioned(
                     top: -110,
                     left: -90,
                     child: _GlowCircle(size: 270, color: AppTheme.paleGreen),
                   ),
-                  Positioned(
+                  const Positioned(
                     bottom: -130,
                     right: -100,
                     child: _GlowCircle(size: 300, color: AppTheme.paleGold),

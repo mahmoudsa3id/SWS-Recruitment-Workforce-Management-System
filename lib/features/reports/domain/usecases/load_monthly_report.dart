@@ -1,1 +1,10 @@
-import '../../../../core/result.dart'; import '../entities/monthly_financial_report.dart'; import '../repositories/reports_repository.dart'; class LoadMonthlyReport { const LoadMonthlyReport(this.repository); final ReportsRepository repository; Future<Result<MonthlyFinancialReport>> call(DateTime month)=>repository.monthly(month); }
+import '../../../../core/result.dart';
+import '../entities/monthly_financial_report.dart';
+import '../repositories/reports_repository.dart';
+
+class LoadMonthlyReport {
+  const LoadMonthlyReport(this.repository);
+  final ReportsRepository repository;
+  Future<Result<MonthlyFinancialReport>> call(DateTime month) =>
+      repository.monthly(month);
+}

@@ -162,8 +162,9 @@ class _TravelersViewState extends State<_TravelersView> {
             ),
             FilledButton(
               onPressed: () {
-                if (form.currentState?.validate() == true)
+                if (form.currentState?.validate() == true) {
                   Navigator.pop(d, true);
+                }
               },
               child: const Text('إنشاء الملف'),
             ),
@@ -205,8 +206,9 @@ class _TravelersViewState extends State<_TravelersView> {
           mimeType: mime,
           bytes: Uint8List.fromList(bytes),
         );
-        if (avatarError != null)
+        if (avatarError != null) {
           message = 'تم إنشاء المسافر، لكن تعذر رفع صورته: $avatarError';
+        }
       } catch (e) {
         message = 'تم إنشاء المسافر، لكن تعذر قراءة الصورة: $e';
       }
@@ -259,6 +261,7 @@ class _TravelersViewState extends State<_TravelersView> {
       ).showSnackBar(const SnackBar(content: Text('اكتب سبب الحذف.')));
       return;
     }
+    // ignore: use_build_context_synchronously
     final outcome = await context.read<TravelersCubit>().deleteTraveler(
       travelerId: traveler.id,
       reason: reason.text.trim(),
@@ -360,8 +363,9 @@ class _TravelersViewState extends State<_TravelersView> {
                 final filtered = all
                     .where((t) {
                       if (activeSalesFilter != null &&
-                          t.salesPerson?.trim() != activeSalesFilter)
+                          t.salesPerson?.trim() != activeSalesFilter) {
                         return false;
+                      }
                       switch (_filter) {
                         case 'uninspected':
                           return !t.inspected &&
@@ -428,19 +432,19 @@ class _TravelersViewState extends State<_TravelersView> {
                                 const Color(0xFFB7791F),
                               ),
                               _summaryCard(
-                                  'سددوا بالكامل',
-                                  fullyPaid,
-                                  Icons.verified_rounded,
-                                  'fullyPaid',
-                                  const Color(0xFF287A55),
-                                ),
+                                'سددوا بالكامل',
+                                fullyPaid,
+                                Icons.verified_rounded,
+                                'fullyPaid',
+                                const Color(0xFF287A55),
+                              ),
                               _summaryCard(
-                                  'عليهم مستحقات',
-                                  debts,
-                                  Icons.account_balance_wallet_outlined,
-                                  'debts',
-                                  const Color(0xFFB54747),
-                                ),
+                                'عليهم مستحقات',
+                                debts,
+                                Icons.account_balance_wallet_outlined,
+                                'debts',
+                                const Color(0xFFB54747),
+                              ),
                             ],
                           );
                         },
@@ -748,24 +752,24 @@ class _TravelersViewState extends State<_TravelersView> {
             ),
             const SizedBox(width: 8),
             Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '${t.remaining.toStringAsFixed(0)} ج.م',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w900,
-                      color: t.remaining > .009
-                          ? const Color(0xFFB54747)
-                          : const Color(0xFF287A55),
-                    ),
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '${t.remaining.toStringAsFixed(0)} ج.م',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    color: t.remaining > .009
+                        ? const Color(0xFFB54747)
+                        : const Color(0xFF287A55),
                   ),
-                  const Text(
-                    'المتبقي',
-                    style: TextStyle(fontSize: 10, color: AppTheme.muted),
-                  ),
-                ],
-              ),
+                ),
+                const Text(
+                  'المتبقي',
+                  style: TextStyle(fontSize: 10, color: AppTheme.muted),
+                ),
+              ],
+            ),
             const SizedBox(width: 4),
             if (t.remaining > .009)
               IconButton(
@@ -792,7 +796,7 @@ class _TravelersViewState extends State<_TravelersView> {
               tooltip: 'خيارات المسافر',
               onSelected: (value) {
                 if (!widget.isHr && value == 'delete') _delete(context, t);
-                if (value == 'profile')
+                if (value == 'profile') {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (_) => TravelerProfilePage(
@@ -801,6 +805,7 @@ class _TravelersViewState extends State<_TravelersView> {
                       ),
                     ),
                   );
+                }
               },
               itemBuilder: (_) => [
                 const PopupMenuItem(

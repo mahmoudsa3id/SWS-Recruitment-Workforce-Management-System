@@ -147,12 +147,13 @@ class _AuthGateState extends State<_AuthGate> {
       ),
       builder: (context, snapshot) {
         final user = client.auth.currentUser;
-        if (user == null)
+        if (user == null) {
           return LoginPage(
             onSignedIn: () {
               if (mounted) setState(() {});
             },
           );
+        }
         return _AdminGate(
           key: ValueKey(user.id),
           userId: user.id,
@@ -189,7 +190,11 @@ class _AdminGateState extends State<_AdminGate> {
   }
 
   Future<bool> _loadIsHr() async {
-    final row = await sl<SupabaseClient>().from('profiles').select('role,is_active').eq('user_id', widget.userId).maybeSingle();
+    final row = await sl<SupabaseClient>()
+        .from('profiles')
+        .select('role,is_active')
+        .eq('user_id', widget.userId)
+        .maybeSingle();
     return row != null && row['role'] == 'hr' && row['is_active'] == true;
   }
 
@@ -218,7 +223,10 @@ class _AdminGateState extends State<_AdminGate> {
                   ),
                   const SizedBox(height: 12),
                   FilledButton(
-                    onPressed: () => setState(() { _profile = _load(); _isHr = _loadIsHr(); }),
+                    onPressed: () => setState(() {
+                      _profile = _load();
+                      _isHr = _loadIsHr();
+                    }),
                     child: const Text('إعادة المحاولة'),
                   ),
                   TextButton(
@@ -244,7 +252,10 @@ class _AdminGateState extends State<_AdminGate> {
                   Text(failure.message, textAlign: TextAlign.center),
                   const SizedBox(height: 12),
                   FilledButton(
-                    onPressed: () => setState(() { _profile = _load(); _isHr = _loadIsHr(); }),
+                    onPressed: () => setState(() {
+                      _profile = _load();
+                      _isHr = _loadIsHr();
+                    }),
                     child: const Text('إعادة المحاولة'),
                   ),
                   TextButton(
@@ -257,11 +268,28 @@ class _AdminGateState extends State<_AdminGate> {
           ),
         ),
         (allowed) => allowed
-            ? FutureBuilder<bool>(future: _isHr, builder: (context, roleSnapshot) {
-                if (roleSnapshot.connectionState != ConnectionState.done) return const Scaffold(body: AppLoadingSkeleton());
-                if (roleSnapshot.hasError) return Scaffold(body: Center(child: FilledButton(onPressed: () => setState(() => _isHr = _loadIsHr()), child: const Text('إعادة التحقق من صلاحيات الحساب'))));
-                return DashboardPage(onSignOut: widget.onSignOut, isHr: roleSnapshot.data == true);
-              })
+            ? FutureBuilder<bool>(
+                future: _isHr,
+                builder: (context, roleSnapshot) {
+                  if (roleSnapshot.connectionState != ConnectionState.done) {
+                    return const Scaffold(body: AppLoadingSkeleton());
+                  }
+                  if (roleSnapshot.hasError) {
+                    return Scaffold(
+                      body: Center(
+                        child: FilledButton(
+                          onPressed: () => setState(() => _isHr = _loadIsHr()),
+                          child: const Text('إعادة التحقق من صلاحيات الحساب'),
+                        ),
+                      ),
+                    );
+                  }
+                  return DashboardPage(
+                    onSignOut: widget.onSignOut,
+                    isHr: roleSnapshot.data == true,
+                  );
+                },
+              )
             : Scaffold(
                 body: Center(
                   child: Padding(

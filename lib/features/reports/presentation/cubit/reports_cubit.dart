@@ -26,10 +26,10 @@ final class ReportsFailure extends ReportsState {
 }
 
 class ReportsCubit extends AccountingSyncCubit<ReportsState> {
-  ReportsCubit(this._load) : super(const ReportsInitial(), listenToMonthChanges: true);
+  ReportsCubit(this._load)
+    : super(const ReportsInitial(), listenToMonthChanges: true);
 
   final LoadMonthlyReport _load;
-  DateTime? _month;
 
   @override
   Future<void> refreshAfterDataChange() async {
@@ -37,7 +37,6 @@ class ReportsCubit extends AccountingSyncCubit<ReportsState> {
   }
 
   Future<void> load(DateTime month) async {
-    _month = month;
     emit(const ReportsLoading());
     final result = await _load(month);
     result.fold(

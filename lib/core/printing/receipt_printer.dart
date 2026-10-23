@@ -120,7 +120,11 @@ class ReceiptPrinter {
               pw.Center(
                 child: pw.Text(
                   'هذا الإيصال ناتج عن حركة مالية محفوظة في النظام',
-                  style: pw.TextStyle(font: regular, fontSize: 8, color: PdfColors.grey),
+                  style: pw.TextStyle(
+                    font: regular,
+                    fontSize: 8,
+                    color: PdfColors.grey,
+                  ),
                 ),
               ),
             ],
@@ -236,8 +240,8 @@ class ReceiptPrinter {
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text('توقيع المستلم: ______________'),
-                  pw.Text('اعتماد الإدارة: ______________'),
+                  pw.Text('توقيع المستلم: '),
+                  pw.Text('اعتماد الإدارة: '),
                 ],
               ),
             ],
@@ -260,36 +264,116 @@ class ReceiptPrinter {
     required DateTime date,
     required String status,
   }) async {
-    final regular = pw.Font.ttf(await rootBundle.load('assets/fonts/NotoSansArabic-Regular.ttf'));
-    final bold = pw.Font.ttf(await rootBundle.load('assets/fonts/NotoSansArabic-Bold.ttf'));
-    final doc = pw.Document(theme: pw.ThemeData.withFont(base: regular, bold: bold));
+    final regular = pw.Font.ttf(
+      await rootBundle.load('assets/fonts/NotoSansArabic-Regular.ttf'),
+    );
+    final bold = pw.Font.ttf(
+      await rootBundle.load('assets/fonts/NotoSansArabic-Bold.ttf'),
+    );
+    final doc = pw.Document(
+      theme: pw.ThemeData.withFont(base: regular, bold: bold),
+    );
     final fmt = NumberFormat('#,##0.00', 'en');
-    doc.addPage(pw.Page(pageFormat: PdfPageFormat.a5, margin: const pw.EdgeInsets.all(28), theme: pw.ThemeData.withFont(base: regular, bold: bold), build: (_) => pw.Directionality(textDirection: pw.TextDirection.rtl, child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.stretch, children: [
-      pw.Text('شركة شمس الإبداع', style: pw.TextStyle(font: bold, fontSize: 20, color: PdfColor.fromHex('#174B3B'))),
-      pw.SizedBox(height: 6), pw.Text('إيصال مصروف مكتب', style: pw.TextStyle(font: bold, fontSize: 16)),
-      pw.Divider(color: PdfColor.fromHex('#D7B56D'), thickness: 2),
-      _line(
+    doc.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a5,
+        margin: const pw.EdgeInsets.all(28),
+        theme: pw.ThemeData.withFont(base: regular, bold: bold),
+        build: (_) => pw.Directionality(
+          textDirection: pw.TextDirection.rtl,
+          child: pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+            children: [
+              pw.Text(
+                'شركة شمس الإبداع',
+                style: pw.TextStyle(
+                  font: bold,
+                  fontSize: 20,
+                  color: PdfColor.fromHex('#174B3B'),
+                ),
+              ),
+              pw.SizedBox(height: 6),
+              pw.Text(
+                'إيصال مصروف مكتب',
+                style: pw.TextStyle(font: bold, fontSize: 16),
+              ),
+              pw.Divider(color: PdfColor.fromHex('#D7B56D'), thickness: 2),
+              _line(
                 'رقم الإيصال',
                 _cleanSerial(receiptNo),
                 bold,
                 valueDirection: pw.TextDirection.ltr,
                 valueFont: regular,
               ),
-      _line(
-        'التاريخ',
-        DateFormat('yyyy-MM-dd HH:mm').format(date),
-        bold,
-        valueDirection: pw.TextDirection.ltr,
-        valueFont: regular,
+              _line(
+                'التاريخ',
+                DateFormat('yyyy-MM-dd HH:mm').format(date),
+                bold,
+                valueDirection: pw.TextDirection.ltr,
+                valueFont: regular,
+              ),
+              _line('التصنيف', category, bold),
+              _line('طريقة الدفع', _method(method), bold),
+              _line(
+                'حالة الحركة',
+                status == 'posted' ? 'مسجلة' : 'ملغاة/معكوسة',
+                bold,
+              ),
+              if (description.trim().isNotEmpty)
+                _line('البيان', description, bold),
+              pw.SizedBox(height: 16),
+              pw.Container(
+                padding: const pw.EdgeInsets.all(14),
+                decoration: pw.BoxDecoration(
+                  color: PdfColor.fromHex('#F4F1E8'),
+                  borderRadius: pw.BorderRadius.circular(8),
+                ),
+                child: pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text(
+                      'قيمة المصروف',
+                      style: pw.TextStyle(font: bold, fontSize: 13),
+                    ),
+                    pw.Text(
+                      '${fmt.format(amount)} ج.م',
+                      style: pw.TextStyle(
+                        font: bold,
+                        fontSize: 18,
+                        color: PdfColor.fromHex('#B42318'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              pw.Spacer(),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('إعداد: ______________'),
+                  pw.Text('اعتماد الإدارة: ______________'),
+                ],
+              ),
+              pw.SizedBox(height: 12),
+              pw.Center(
+                child: pw.Text(
+                  'هذا الإيصال مرتبط بحركة مالية محفوظة في النظام',
+                  style: pw.TextStyle(
+                    font: regular,
+                    fontSize: 8,
+                    color: PdfColors.grey,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-      _line('التصنيف', category, bold), _line('طريقة الدفع', _method(method), bold),
-      _line('حالة الحركة', status == 'posted' ? 'مسجلة' : 'ملغاة/معكوسة', bold),
-      if (description.trim().isNotEmpty) _line('البيان', description, bold),
-      pw.SizedBox(height: 16), pw.Container(padding: const pw.EdgeInsets.all(14), decoration: pw.BoxDecoration(color: PdfColor.fromHex('#F4F1E8'), borderRadius: pw.BorderRadius.circular(8)), child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [pw.Text('قيمة المصروف', style: pw.TextStyle(font: bold, fontSize: 13)), pw.Text('${fmt.format(amount)} ج.م', style: pw.TextStyle(font: bold, fontSize: 18, color: PdfColor.fromHex('#B42318')))])),
-      pw.Spacer(), pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [pw.Text('إعداد: ______________'), pw.Text('اعتماد الإدارة: ______________')]),
-      pw.SizedBox(height: 12), pw.Center(child: pw.Text('هذا الإيصال مرتبط بحركة مالية محفوظة في النظام', style: pw.TextStyle(font: regular, fontSize: 8, color: PdfColors.grey))),
-    ]))));
-    await Printing.layoutPdf(onLayout: (_) => doc.save(), name: 'SWS-Expense-$receiptNo.pdf');
+    );
+    await Printing.layoutPdf(
+      onLayout: (_) => doc.save(),
+      name: 'SWS-Expense-$receiptNo.pdf',
+    );
   }
 
   static Future<void> printPayrollStatement({
@@ -304,29 +388,86 @@ class ReceiptPrinter {
     required double paidAmount,
     required double outstanding,
   }) async {
-    final regular = pw.Font.ttf(await rootBundle.load('assets/fonts/NotoSansArabic-Regular.ttf'));
-    final bold = pw.Font.ttf(await rootBundle.load('assets/fonts/NotoSansArabic-Bold.ttf'));
-    final doc = pw.Document(theme: pw.ThemeData.withFont(base: regular, bold: bold));
+    final regular = pw.Font.ttf(
+      await rootBundle.load('assets/fonts/NotoSansArabic-Regular.ttf'),
+    );
+    final bold = pw.Font.ttf(
+      await rootBundle.load('assets/fonts/NotoSansArabic-Bold.ttf'),
+    );
+    final doc = pw.Document(
+      theme: pw.ThemeData.withFont(base: regular, bold: bold),
+    );
     final fmt = NumberFormat('#,##0.00', 'en');
-    doc.addPage(pw.Page(pageFormat: PdfPageFormat.a5, margin: const pw.EdgeInsets.all(28), theme: pw.ThemeData.withFont(base: regular, bold: bold), build: (_) => pw.Directionality(textDirection: pw.TextDirection.rtl, child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.stretch, children: [
-      pw.Text('شركة شمس الإبداع', style: pw.TextStyle(font: bold, fontSize: 20, color: PdfColor.fromHex('#174B3B'))),
-      pw.SizedBox(height: 6), pw.Text('كشف استحقاق راتب', style: pw.TextStyle(font: bold, fontSize: 16)),
-      pw.Divider(color: PdfColor.fromHex('#D7B56D'), thickness: 2),
-      _line(
-        'رقم السجل',
-        _cleanSerial(recordId),
-        bold,
-        valueDirection: pw.TextDirection.ltr,
-        valueFont: regular,
-      ), _line('اسم الموظف', employeeName, bold), _line('شهر الاستحقاق', month, bold),
-      _line('الراتب الأساسي', '${fmt.format(baseSalary)} ج.م', bold), _line('العمولة', '${fmt.format(commission)} ج.م', bold),
-      _line('المكافأة', '${fmt.format(bonus)} ج.م', bold), _line('الأوفر تايم', '${fmt.format(overtime)} ج.م', bold), _line('الخصومات', '${fmt.format(deductions)} ج.م', bold),
-      pw.Divider(), _line('إجمالي الاستحقاق', '${fmt.format(baseSalary + commission + bonus + overtime - deductions)} ج.م', bold),
-      _line('إجمالي المدفوع', '${fmt.format(paidAmount)} ج.م', bold),
-      pw.Container(padding: const pw.EdgeInsets.all(12), decoration: pw.BoxDecoration(color: PdfColor.fromHex('#F4F1E8'), borderRadius: pw.BorderRadius.circular(8)), child: _line('المتبقي', '${fmt.format(outstanding)} ج.م', bold)),
-      pw.Spacer(), pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [pw.Text('توقيع الموظف: ______________'), pw.Text('اعتماد الإدارة: ______________')]),
-    ]))));
-    await Printing.layoutPdf(onLayout: (_) => doc.save(), name: 'SWS-Payroll-$recordId.pdf');
+    doc.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a5,
+        margin: const pw.EdgeInsets.all(28),
+        theme: pw.ThemeData.withFont(base: regular, bold: bold),
+        build: (_) => pw.Directionality(
+          textDirection: pw.TextDirection.rtl,
+          child: pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+            children: [
+              pw.Text(
+                'شركة شمس الإبداع',
+                style: pw.TextStyle(
+                  font: bold,
+                  fontSize: 20,
+                  color: PdfColor.fromHex('#174B3B'),
+                ),
+              ),
+              pw.SizedBox(height: 6),
+              pw.Text(
+                'كشف استحقاق راتب',
+                style: pw.TextStyle(font: bold, fontSize: 16),
+              ),
+              pw.Divider(color: PdfColor.fromHex('#D7B56D'), thickness: 2),
+              _line(
+                'رقم السجل',
+                _cleanSerial(recordId),
+                bold,
+                valueDirection: pw.TextDirection.ltr,
+                valueFont: regular,
+              ),
+              _line('اسم الموظف', employeeName, bold),
+              _line('شهر الاستحقاق', month, bold),
+              _line('الراتب الأساسي', '${fmt.format(baseSalary)} ج.م', bold),
+              _line('العمولة', '${fmt.format(commission)} ج.م', bold),
+              _line('المكافأة', '${fmt.format(bonus)} ج.م', bold),
+              _line('الأوفر تايم', '${fmt.format(overtime)} ج.م', bold),
+              _line('الخصومات', '${fmt.format(deductions)} ج.م', bold),
+              pw.Divider(),
+              _line(
+                'إجمالي الاستحقاق',
+                '${fmt.format(baseSalary + commission + bonus + overtime - deductions)} ج.م',
+                bold,
+              ),
+              _line('إجمالي المدفوع', '${fmt.format(paidAmount)} ج.م', bold),
+              pw.Container(
+                padding: const pw.EdgeInsets.all(12),
+                decoration: pw.BoxDecoration(
+                  color: PdfColor.fromHex('#F4F1E8'),
+                  borderRadius: pw.BorderRadius.circular(8),
+                ),
+                child: _line('المتبقي', '${fmt.format(outstanding)} ج.م', bold),
+              ),
+              pw.Spacer(),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('توقيع الموظف: ______________'),
+                  pw.Text('اعتماد الإدارة: ______________'),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await Printing.layoutPdf(
+      onLayout: (_) => doc.save(),
+      name: 'SWS-Payroll-$recordId.pdf',
+    );
   }
 
   static pw.Widget _line(
@@ -361,7 +502,12 @@ class ReceiptPrinter {
 
   /// Strip invisible bidi/control marks that can be accidentally stored in IDs.
   static String _cleanSerial(String value) => value
-      .replaceAll(RegExp(r'[\u0000-\u001F\u007F\u200B-\u200F\u202A-\u202E\u2060\u2066-\u2069\uFEFF]'), '')
+      .replaceAll(
+        RegExp(
+          r'[\u0000-\u001F\u007F\u200B-\u200F\u202A-\u202E\u2060\u2066-\u2069\uFEFF]',
+        ),
+        '',
+      )
       .trim();
   static String _method(String v) => switch (v) {
     'cash' => 'نقدي',

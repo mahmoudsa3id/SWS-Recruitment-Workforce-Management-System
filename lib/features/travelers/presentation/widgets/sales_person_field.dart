@@ -8,7 +8,7 @@ class SalesPersonField extends StatefulWidget {
   const SalesPersonField({
     super.key,
     required this.controller,
-    this.label = 'مسؤول المبيعات',
+    this.label = 'مسؤول السيلز',
   });
 
   final TextEditingController controller;
@@ -51,7 +51,8 @@ class _SalesPersonFieldState extends State<SalesPersonField> {
     } catch (_) {
       // The field remains usable for new names if suggestions cannot be loaded.
     }
-    final result = names.values.toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    final result = names.values.toList()
+      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
     return result;
   }
 
@@ -117,7 +118,10 @@ class _SalesPersonFieldState extends State<SalesPersonField> {
                 borderRadius: BorderRadius.circular(12),
                 clipBehavior: Clip.antiAlias,
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxHeight: 240, maxWidth: 400),
+                  constraints: const BoxConstraints(
+                    maxHeight: 240,
+                    maxWidth: 400,
+                  ),
                   child: ListView.separated(
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,

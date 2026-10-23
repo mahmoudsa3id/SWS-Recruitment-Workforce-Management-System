@@ -1,5 +1,5 @@
 import '../../../../core/result.dart';
-import '../auth_repository.dart';
+import '../repository/auth_repository.dart';
 import '../entities/admin_session.dart';
 
 class SignIn {

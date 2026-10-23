@@ -20,6 +20,7 @@ class AccountingMonthScope {
     final next = _firstDay(value);
     if (!sameMonth(selected.value, next)) selected.value = next;
   }
+
   static void shift(int delta) =>
       select(DateTime(start.year, start.month + delta));
 

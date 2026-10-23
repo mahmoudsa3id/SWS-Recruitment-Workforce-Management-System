@@ -5,9 +5,8 @@ import 'package:archive/archive.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as p;
 
-Future<String?> chooseDestination() => FilePicker.getDirectoryPath(
-  dialogTitle: 'اختيار مكان حفظ مجلد المسافر',
-);
+Future<String?> chooseDestination() =>
+    FilePicker.getDirectoryPath(dialogTitle: 'اختيار مكان حفظ مجلد المسافر');
 
 Future<bool> saveZipAsFolder({
   required String destination,
@@ -21,8 +20,11 @@ Future<bool> saveZipAsFolder({
 
   for (final entry in decoded.files) {
     if (!entry.isFile) continue;
-    final segments = p.split(entry.name.replaceAll('\\', '/'))
-        .where((segment) => segment.isNotEmpty && segment != '.' && segment != '..')
+    final segments = p
+        .split(entry.name.replaceAll('\\', '/'))
+        .where(
+          (segment) => segment.isNotEmpty && segment != '.' && segment != '..',
+        )
         .map(_safeSegment)
         .toList();
     if (segments.isEmpty) continue;
@@ -33,7 +35,10 @@ Future<bool> saveZipAsFolder({
     if (content is List<int>) {
       await output.writeAsBytes(content, flush: true);
     } else {
-      await output.writeAsBytes(List<int>.from(content as Iterable), flush: true);
+      await output.writeAsBytes(
+        List<int>.from(content as Iterable),
+        flush: true,
+      );
     }
   }
   return true;
