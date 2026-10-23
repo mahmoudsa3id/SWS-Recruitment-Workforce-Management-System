@@ -12,11 +12,9 @@ import 'features/dashboard/presentation/dashboard_page.dart';
 
 const _url = String.fromEnvironment(
   'SUPABASE_URL',
-  defaultValue: 'https://aidukiieeulfzofzezow.supabase.co',
 );
 const _key = String.fromEnvironment(
   'SUPABASE_PUBLISHABLE_KEY',
-  defaultValue: 'sb_publishable_ekeUegTgbLD9sw28sB-HXg_HYvM2Qm0',
 );
 
 Future<void> main() async {
