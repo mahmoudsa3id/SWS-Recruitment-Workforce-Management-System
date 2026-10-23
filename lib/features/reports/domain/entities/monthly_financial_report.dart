@@ -1,0 +1,24 @@
+class MonthlyFinancialReport {
+  const MonthlyFinancialReport({
+    required this.monthStart,
+    required this.openingBalance,
+    required this.travelerCollections,
+    required this.generalRevenue,
+    required this.officeExpenses,
+    required this.payrollPayments,
+    required this.otherCredits,
+    required this.otherDebits,
+  });
+  final DateTime monthStart;
+  final double openingBalance,
+      travelerCollections,
+      generalRevenue,
+      officeExpenses,
+      payrollPayments,
+      otherCredits,
+      otherDebits;
+  double get totalIncome => travelerCollections + generalRevenue + otherCredits;
+  double get totalExpenses => officeExpenses + payrollPayments + otherDebits;
+  double get netMovement => totalIncome - totalExpenses;
+  double get closingBalance => openingBalance + netMovement;
+}

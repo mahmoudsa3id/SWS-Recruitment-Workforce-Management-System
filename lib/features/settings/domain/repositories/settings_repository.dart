@@ -1,0 +1,7 @@
+import '../../../../core/result.dart';
+import '../entities/system_settings.dart';
+
+abstract interface class SettingsRepository {
+  Future<Result<SystemSettings>> load();
+  Future<Result<void>> clearLocalCache();
+}

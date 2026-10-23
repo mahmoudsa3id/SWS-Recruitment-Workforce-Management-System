@@ -1,0 +1,31 @@
+import '../../domain/entities/monthly_closing.dart';
+
+class MonthlyClosingModel extends MonthlyClosing {
+  const MonthlyClosingModel({
+    required super.id,
+    required super.monthStart,
+    required super.openingBalance,
+    required super.closingBalance,
+    required super.status,
+    super.closedAt,
+    super.reopenedAt,
+    super.reopenReason,
+  });
+  factory MonthlyClosingModel.fromMap(Map<String, dynamic> m) =>
+      MonthlyClosingModel(
+        id: '${m['id'] ?? ''}',
+        monthStart:
+            DateTime.tryParse('${m['month_start'] ?? ''}') ??
+            DateTime.fromMillisecondsSinceEpoch(0),
+        openingBalance: _n(m['opening_balance']),
+        closingBalance: _n(m['closing_balance']),
+        status: '${m['status'] ?? 'open'}',
+        closedAt: DateTime.tryParse('${m['closed_at'] ?? ''}'),
+        reopenedAt: DateTime.tryParse('${m['reopened_at'] ?? ''}'),
+        reopenReason: m['reopen_reason']?.toString(),
+      );
+  static double _n(dynamic v) {
+    final parsed = v is num ? v.toDouble() : double.tryParse('$v') ?? 0;
+    return parsed.isFinite ? parsed : 0;
+  }
+}

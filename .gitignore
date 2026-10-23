@@ -1,58 +1,28 @@
 
-# Flutter / Dart
+# Kotlin temporary errors
+android/.kotlin/
+
+# Flutter generated files
 .dart_tool/
-.packages
 .pub/
-.pub-cache/
 build/
 .flutter-plugins
 .flutter-plugins-dependencies
-.flutter-*
-coverage/
-*.freezed.dart.tmp
 
-# IDE
-.idea/
-.vscode/
-*.iml
-*.swp
-.DS_Store
-Thumbs.db
-
-# Environment variables and secrets
+# Local secrets
 .env
 .env.*
 !.env.example
+android/key.properties
+*.jks
+*.keystore
 *.pem
 *.key
-secrets/
-secrets.json
-credentials.json
 
-# Android signing credentials
-android/key.properties
-android/app/*.jks
-android/app/*.keystore
-
-# Local databases and user data
+# Local databases and backups
 *.db
 *.sqlite
 *.sqlite3
-*.db-journal
-*.sqlite-wal
-*.sqlite-shm
-*.bak
-*.backup
-
-# Logs and temporary files
-*.log
-*.tmp
-*.temp
-*.cache
-
-# Private exports and documents
+backups/
 private/
 local_data/
-backups/
-exports/
-uploads/

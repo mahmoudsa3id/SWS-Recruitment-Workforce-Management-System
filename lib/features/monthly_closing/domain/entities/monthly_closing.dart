@@ -1,0 +1,18 @@
+class MonthlyClosing {
+  const MonthlyClosing({
+    required this.id,
+    required this.monthStart,
+    required this.openingBalance,
+    required this.closingBalance,
+    required this.status,
+    this.closedAt,
+    this.reopenedAt,
+    this.reopenReason,
+  });
+  final String id, status;
+  final DateTime monthStart;
+  final double openingBalance, closingBalance;
+  final DateTime? closedAt, reopenedAt;
+  final String? reopenReason;
+  bool get isClosed => status == 'closed';
+}

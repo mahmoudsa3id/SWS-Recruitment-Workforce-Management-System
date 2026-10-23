@@ -1,0 +1,89 @@
+import 'dart:typed_data';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/cache/local_cache.dart';
+
+class DocumentsRemoteDataSource {
+  DocumentsRemoteDataSource(this.client, this.cache);
+  final SupabaseClient client;
+  final LocalCache cache;
+  static const bucket = 'sws-private-documents';
+  Future<List<Map<String, dynamic>>> list(String travelerId) async {
+    try {
+      final rows = List<Map<String, dynamic>>.from(
+        await client
+            .from('traveler_documents')
+            .select()
+            .eq('traveler_id', travelerId)
+            .order('created_at', ascending: false)
+            .limit(500),
+      );
+      await cache.writeJson(
+        'documents_$travelerId',
+        rows,
+        ttl: const Duration(days: 7),
+      );
+      return rows;
+    } catch (e) {
+      final cached = cache.readJson('documents_$travelerId');
+      if (cached is List) {
+        return cached
+            .whereType<Map>()
+            .map((row) => Map<String, dynamic>.from(row))
+            .toList(growable: false);
+      }
+      rethrow;
+    }
+  }
+
+  Future<String> upload({
+    required String travelerId,
+    required String type,
+    required String fileName,
+    required String mimeType,
+    required Uint8List bytes,
+  }) async {
+    if (bytes.isEmpty) throw ArgumentError('Empty file');
+    final safe = fileName.replaceAll(RegExp(r'[^a-zA-Z0-9._-]'), '_');
+    final path = '$travelerId/${DateTime.now().microsecondsSinceEpoch}_$safe';
+    await client.storage
+        .from(bucket)
+        .uploadBinary(
+          path,
+          bytes,
+          fileOptions: FileOptions(contentType: mimeType, upsert: false),
+        );
+    try {
+      await client.from('traveler_documents').insert({
+        'traveler_id': travelerId,
+        'document_type': type,
+        'file_name': fileName,
+        'storage_path': path,
+        'mime_type': mimeType,
+        'file_size': bytes.length,
+        'created_by': client.auth.currentUser?.id,
+      });
+    } catch (_) {
+      try {
+        await client.storage.from(bucket).remove([path]);
+      } catch (__) {}
+      rethrow;
+    }
+    return path;
+  }
+
+  Future<String> signedUrl(String path) async =>
+      await client.storage.from(bucket).createSignedUrl(path, 300);
+  Future<Uint8List> download(String path) async =>
+      await client.storage.from(bucket).download(path);
+  Future<void> deleteDocument(String id, String path, String reason) async {
+    await client.rpc(
+      'sws_delete_traveler_document',
+      params: {'p_document_id': id, 'p_reason': reason},
+    );
+    try {
+      await client.storage.from(bucket).remove([path]);
+    } catch (_) {
+      /* Metadata deletion is audited; orphan cleanup can be retried by admin. */
+    }
+  }
+}

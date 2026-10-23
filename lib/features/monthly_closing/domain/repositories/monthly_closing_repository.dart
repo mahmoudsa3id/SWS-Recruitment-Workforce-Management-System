@@ -1,0 +1,8 @@
+import '../../../../core/result.dart';
+import '../entities/monthly_closing.dart';
+
+abstract interface class MonthlyClosingRepository {
+  Future<Result<List<MonthlyClosing>>> list();
+  Future<Result<String>> close(DateTime month, {String note = ''});
+  Future<Result<String>> reopen(DateTime month, String reason);
+}

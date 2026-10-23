@@ -1,0 +1,8 @@
+import '../../../../core/result.dart';
+import '../repositories/documents_repository.dart';
+
+class CreateDocumentLink {
+  const CreateDocumentLink(this.repository);
+  final DocumentsRepository repository;
+  Future<Result<String>> call(String path) => repository.createSignedUrl(path);
+}

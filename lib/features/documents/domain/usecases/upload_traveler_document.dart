@@ -1,0 +1,21 @@
+import 'dart:typed_data';
+import '../../../../core/result.dart';
+import '../repositories/documents_repository.dart';
+
+class UploadTravelerDocument {
+  const UploadTravelerDocument(this.repository);
+  final DocumentsRepository repository;
+  Future<Result<String>> call({
+    required String travelerId,
+    required String type,
+    required String fileName,
+    required String mimeType,
+    required Uint8List bytes,
+  }) => repository.upload(
+    travelerId: travelerId,
+    type: type,
+    fileName: fileName,
+    mimeType: mimeType,
+    bytes: bytes,
+  );
+}
