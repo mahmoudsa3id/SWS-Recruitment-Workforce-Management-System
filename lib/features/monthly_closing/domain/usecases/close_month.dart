@@ -1,0 +1,1 @@
+import '../../../../core/result.dart'; import '../repositories/monthly_closing_repository.dart'; class CloseMonth { const CloseMonth(this.repository); final MonthlyClosingRepository repository; Future<Result<String>> call(DateTime month,{String note=''})=>repository.close(month,note:note); }

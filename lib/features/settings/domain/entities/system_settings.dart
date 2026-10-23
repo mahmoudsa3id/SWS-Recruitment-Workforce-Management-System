@@ -1,0 +1,1 @@
+class SystemSettings { const SystemSettings({required this.appName,required this.language,required this.signedInEmail,required this.cacheNamespace}); final String appName,language,signedInEmail,cacheNamespace; }

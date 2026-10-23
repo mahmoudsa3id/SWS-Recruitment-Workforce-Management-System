@@ -1,0 +1,17 @@
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.env
+*.iml
+.idea/
+.vscode/
+coverage/
+android/local.properties
+supabase/.temp/
+*.db
+*.db-journal
+backups/
+*.dump
+*.zip

@@ -1,0 +1,1 @@
+import '../../../../core/result.dart'; import '../entities/system_settings.dart'; import '../repositories/settings_repository.dart'; class LoadSystemSettings { const LoadSystemSettings(this.repository); final SettingsRepository repository; Future<Result<SystemSettings>> call()=>repository.load(); }
