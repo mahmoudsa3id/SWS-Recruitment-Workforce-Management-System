@@ -1,17 +1,58 @@
+
+# Flutter / Dart
 .dart_tool/
 .packages
+.pub/
+.pub-cache/
 build/
 .flutter-plugins
 .flutter-plugins-dependencies
-.env
-*.iml
+.flutter-*
+coverage/
+*.freezed.dart.tmp
+
+# IDE
 .idea/
 .vscode/
-coverage/
-android/local.properties
-supabase/.temp/
+*.iml
+*.swp
+.DS_Store
+Thumbs.db
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+secrets.json
+credentials.json
+
+# Android signing credentials
+android/key.properties
+android/app/*.jks
+android/app/*.keystore
+
+# Local databases and user data
 *.db
+*.sqlite
+*.sqlite3
 *.db-journal
+*.sqlite-wal
+*.sqlite-shm
+*.bak
+*.backup
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+*.cache
+
+# Private exports and documents
+private/
+local_data/
 backups/
-*.dump
-*.zip
+exports/
+uploads/

@@ -1,5 +1,3 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../core/data_sync/accounting_data_sync.dart';
 import '../../domain/entities/office_expense.dart';
 import '../../domain/usecases/create_expense.dart';
@@ -30,7 +28,7 @@ final class ExpensesFailure extends ExpensesState {
 
 class ExpensesCubit extends AccountingSyncCubit<ExpensesState> {
   ExpensesCubit(this._list, this._create, this._repository)
-      : super(const ExpensesInitial(), listenToMonthChanges: true);
+    : super(const ExpensesInitial(), listenToMonthChanges: true);
 
   final ListExpenses _list;
   final CreateExpense _create;

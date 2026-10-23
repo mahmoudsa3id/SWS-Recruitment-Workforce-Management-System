@@ -26,12 +26,8 @@ class FinanceRemoteDataSource {
         .select(
           'id,receipt_no,movement_type,direction,amount,payment_method,note,status,created_at,traveler_id,reverses_movement_id,travelers(full_name)',
         );
-    if (from != null) {
-      query = query.gte('created_at', from.toUtc().toIso8601String());
-    }
-    if (to != null) {
-      query = query.lt('created_at', to.toUtc().toIso8601String());
-    }
+    query = query.gte('created_at', from.toUtc().toIso8601String());
+    query = query.lt('created_at', to.toUtc().toIso8601String());
     if (type != null && type.trim().isNotEmpty) {
       query = query.eq('movement_type', type.trim());
     }
