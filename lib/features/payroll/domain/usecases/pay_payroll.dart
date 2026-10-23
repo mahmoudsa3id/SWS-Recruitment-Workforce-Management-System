@@ -1,1 +1,0 @@
-import '../../../../core/result.dart'; import '../repositories/payroll_repository.dart'; class PayPayroll { const PayPayroll(this.repository); final PayrollRepository repository; Future<Result<String>> call({required String payrollId,required double amount,required String method,required String note})=>repository.pay(payrollId:payrollId,amount:amount,method:method,note:note); }
