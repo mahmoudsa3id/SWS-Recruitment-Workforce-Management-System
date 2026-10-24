@@ -1,1 +1,34 @@
-import '../../domain/entities/audit_entry.dart'; class AuditEntryModel extends AuditEntry { const AuditEntryModel({required super.id,required super.action,required super.entityType,required super.createdAt,super.entityId,super.reason,super.beforeData,super.afterData,super.actorId}); factory AuditEntryModel.fromMap(Map<String,dynamic> m)=>AuditEntryModel(id:m['id'] is num?(m['id'] as num).toInt():int.tryParse('${m['id']}')??0,action:'${m['action']??''}',entityType:'${m['entity_type']??''}',createdAt:DateTime.tryParse('${m['created_at']??''}')??DateTime.fromMillisecondsSinceEpoch(0),entityId:m['entity_id']?.toString(),reason:m['reason']?.toString(),actorId:m['actor_id']?.toString(),beforeData:m['before_data'] is Map<String,dynamic>?Map<String,dynamic>.from(m['before_data']):null,afterData:m['after_data'] is Map<String,dynamic>?Map<String,dynamic>.from(m['after_data']):null); }
+import '../../domain/entities/audit_entry.dart';
+
+class AuditEntryModel extends AuditEntry {
+  const AuditEntryModel({
+    required super.id,
+    required super.action,
+    required super.entityType,
+    required super.createdAt,
+    super.entityId,
+    super.reason,
+    super.beforeData,
+    super.afterData,
+    super.actorId,
+  });
+  factory AuditEntryModel.fromMap(Map<String, dynamic> m) => AuditEntryModel(
+    id: m['id'] is num
+        ? (m['id'] as num).toInt()
+        : int.tryParse('${m['id']}') ?? 0,
+    action: '${m['action'] ?? ''}',
+    entityType: '${m['entity_type'] ?? ''}',
+    createdAt:
+        DateTime.tryParse('${m['created_at'] ?? ''}') ??
+        DateTime.fromMillisecondsSinceEpoch(0),
+    entityId: m['entity_id']?.toString(),
+    reason: m['reason']?.toString(),
+    actorId: m['actor_id']?.toString(),
+    beforeData: m['before_data'] is Map<String, dynamic>
+        ? Map<String, dynamic>.from(m['before_data'])
+        : null,
+    afterData: m['after_data'] is Map<String, dynamic>
+        ? Map<String, dynamic>.from(m['after_data'])
+        : null,
+  );
+}

@@ -94,7 +94,9 @@ class TravelerRemoteDataSourceImpl {
   }
 
   Future<List<Map<String, dynamic>>> payments(String id) async {
-    if (await isHr) return <Map<String, dynamic>>[];
+    // Let Supabase RLS decide which traveler movements the current role may read.
+    // HR has read policies for traveler collections/reversals/corrections; admins
+    // retain their existing access. Do not return an empty list solely for HR.
     final rows = await client
         .from('financial_movements')
         .select()
